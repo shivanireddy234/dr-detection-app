@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import time
 from PIL import Image
 
 # ── Page config ───────────────────────────────────
@@ -118,6 +119,9 @@ col_left, col_right = st.columns([1, 2])
 with col_left:
     st.subheader("Model Info")
     st.metric("Parameters", "18,953")
+    # TODO: these two are pending a leakage recheck on the held-out split —
+    # swap in the clean test-set numbers once that's resolved, don't cite
+    # these in the paper until then.
     st.metric("Accuracy", "97.81%")
     st.metric("AUC-ROC", "98.94%")
     st.metric("Platform", "Streamlit Cloud")
@@ -141,8 +145,10 @@ with col_right:
 
         with c2:
             with st.spinner("Running inference..."):
+                t0 = time.perf_counter()
                 img_array = preprocess(img)
                 prob = predict_dr_lite(img_array, weights)
+                inference_ms = (time.perf_counter() - t0) * 1000
 
             label = "DR Detected" if prob >= 0.5 else "No DR"
             color = "🔴" if prob >= 0.5 else "🟢"
@@ -152,6 +158,9 @@ with col_right:
             st.metric("Classification", f"{color} {label}")
             st.metric("Confidence", f"{conf*100:.1f}%")
             st.progress(float(prob), text=f"DR probability: {prob:.4f}")
+            st.caption(f"⏱️ End-to-end inference: {inference_ms:.2f} ms "
+                       f"(preprocessing + forward pass, server-side compute only — "
+                       f"excludes network/upload time)")
 
             if prob >= 0.5:
                 st.error("⚠️ Likely **DR present** — please consult an ophthalmologist.")
