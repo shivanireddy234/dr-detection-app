@@ -128,7 +128,7 @@ with col_right:
 
         c1, c2 = st.columns(2)
         with c1:
-            st.image(img, caption="Uploaded Fundus Image", use_column_width=True)
+            st.image(img, caption="Uploaded Fundus Image",use_container_width=True)
 
         with c2:
             with st.spinner("Running inference..."):
