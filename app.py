@@ -76,24 +76,14 @@ def predict_dr_lite(img_array, w):
                   w['batch_normalization_2_2'], w['batch_normalization_2_3'])
     x = relu(x); x = maxpool2x2(x)
 
-    x = conv2d_same(x, w['conv2d_3_0'])
-    x = batchnorm(x, w['batch_normalization_3_0'], w['batch_normalization_3_1'],
-                  w['batch_normalization_3_2'], w['batch_normalization_3_3'])
-    x = relu(x); x = maxpool2x2(x)
-
     x = gap(x)
 
     x = x @ w['dense_0']
-    x = batchnorm(x, w['batch_normalization_4_0'], w['batch_normalization_4_1'],
-                  w['batch_normalization_4_2'], w['batch_normalization_4_3'])
+    x = batchnorm(x, w['batch_normalization_3_0'], w['batch_normalization_3_1'],
+                  w['batch_normalization_3_2'], w['batch_normalization_3_3'])
     x = relu(x)
 
-    x = x @ w['dense_1_0']
-    x = batchnorm(x, w['batch_normalization_5_0'], w['batch_normalization_5_1'],
-                  w['batch_normalization_5_2'], w['batch_normalization_5_3'])
-    x = relu(x)
-
-    x = x @ w['dense_2_0'] + w['dense_2_1']
+    x = x @ w['dense_1_0'] + w['dense_1_1']
     prob = float(sigmoid(x).flatten()[0])
     return prob
 
@@ -118,15 +108,12 @@ col_left, col_right = st.columns([1, 2])
 
 with col_left:
     st.subheader("Model Info")
-    st.metric("Parameters", "18,953")
-    # TODO: these two are pending a leakage recheck on the held-out split —
-    # swap in the clean test-set numbers once that's resolved, don't cite
-    # these in the paper until then.
-    st.metric("Accuracy", "97.81%")
-    st.metric("AUC-ROC", "98.94%")
+        st.metric("Parameters", "4,499")
+    st.metric("Accuracy", "94.36%")
+    st.metric("AUC-ROC", "98.06%")
     st.metric("Platform", "Streamlit Cloud")
     st.markdown("**Architecture:**")
-    st.markdown("- Conv(8)→BN→Pool\n- Conv(16)→BN→Pool\n- Conv(32)→BN→Pool\n- Conv(32)→BN→Pool\n- GAP\n- Dense(64)→BN\n- Dense(16)→BN\n- Dense(1)→Sigmoid")
+    st.markdown("- Conv(6)→BN→Pool\n- Conv(12)→BN→Pool\n- Conv(24)→BN→Pool\n- GAP\n- Dense(32)→BN\n- Dense(1)→Sigmoid")
 
 with col_right:
     weights = load_weights()
