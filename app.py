@@ -14,10 +14,10 @@ st.set_page_config(
 @st.cache_resource
 def load_weights():
     try:
-        w = np.load("lwdcnn_dr_pynq_weights.npz")
+        w = np.load("lwdcnn_dr_lite_new_weights.npz")
         return dict(w)
     except FileNotFoundError:
-        st.error("lwdcnn_dr_pynq_weights.npz not found!")
+        st.error("lwdcnn_dr_lite_new_weights.npz not found!")
         st.stop()
 
 # ── Pure numpy inference ──────────────────────────
