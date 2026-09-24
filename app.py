@@ -108,7 +108,7 @@ col_left, col_right = st.columns([1, 2])
 
 with col_left:
     st.subheader("Model Info")
-        st.metric("Parameters", "4,499")
+    st.metric("Parameters", "4,499")
     st.metric("Accuracy", "94.36%")
     st.metric("AUC-ROC", "98.06%")
     st.metric("Platform", "Streamlit Cloud")
